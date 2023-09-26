@@ -1,11 +1,12 @@
-package br.com.adatech.prospectflow.adapters;
+package br.com.adatech.prospectflow.core.usecases;
 
 import br.com.adatech.prospectflow.core.domain.Client;
 import br.com.adatech.prospectflow.core.domain.ClientType;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 
-public interface ClientPersistenceAdapter {
+public interface ClientPersistenceUseCase {
     Client register(Client client);
     Client change(String cnpjOrCpf, ClientType clientType, Client updatedClient);
     Optional<Client> findOne(String cnpjOrCpf, ClientType clientType);

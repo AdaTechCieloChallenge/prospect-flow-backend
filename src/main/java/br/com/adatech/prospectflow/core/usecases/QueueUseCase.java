@@ -1,4 +1,4 @@
-package br.com.adatech.prospectflow.core;
+package br.com.adatech.prospectflow.core.usecases;
 
 import br.com.adatech.prospectflow.core.domain.Client;
 
