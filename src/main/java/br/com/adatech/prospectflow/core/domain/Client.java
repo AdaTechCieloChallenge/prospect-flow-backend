@@ -2,31 +2,41 @@ package br.com.adatech.prospectflow.core.domain;
 
 import br.com.adatech.prospectflow.core.utils.EmailValidator;
 import com.google.gson.Gson;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Client {
-    private String mcc;
-    @Id
-    private String cpf;
-    private String name;
-    private String email;
+@MappedSuperclass
+//@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Client implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private String mcc;
+    @Column(unique = true)
+    private String cpf;
+    @Column(unique = true)
+    private String email;
+    private String name;
     private ClientType type = null;
 
     public Client(){}
-    /** Validação de dados pelo próprio modelo através dos setters no construtor. **/
-    public Client(String mcc, String cpf, String name, String email) {
+
+    public Client(String mcc, String cpf,  String name, String email) {
         this.setMcc(mcc);
         this.setCpf(cpf);
         this.setName(name);
         this.setEmail(email);
+    }
+
+    /** Validação de dados pelo próprio modelo através dos setters no construtor. **/
+    public Integer getId() {
+        return id;
     }
 
     public String getMcc() {
@@ -80,35 +90,8 @@ public class Client {
         return type;
     }
 
-    public void setType(ClientType type) {
+    public void setType(ClientType type){
         this.type = type;
-    }
+    };
 
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
-    @Override
-    public String toString() {
-        return "Client{" +
-                "mcc='" + mcc + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Client client = (Client) o;
-        return Objects.equals(mcc, client.mcc) && Objects.equals(cpf, client.cpf) && Objects.equals(name, client.name) && Objects.equals(email, client.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(mcc, cpf, name, email);
-    }
 }

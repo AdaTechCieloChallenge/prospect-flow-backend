@@ -1,19 +1,20 @@
 package br.com.adatech.prospectflow.core.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import java.util.Objects;
 @Entity
 public class LegalPerson extends Client {
-    @Id
+    @Column(unique = true)
     private String cnpj;
     private String corporateName;
 
     public LegalPerson() {}
 
     public LegalPerson(String mcc, String cpf, String name, String email, String cnpj, String corporateName) {
-        super(mcc, cpf, name, email); // valida os dados da classe filha pela herança.
+        super(mcc, cpf, name, email);
         this.setCnpj(cnpj);
         this.setCorporateName(corporateName);
         this.setType(ClientType.PJ); // atribui o ClientType correto, transmitido por herança, para a subclasse.
