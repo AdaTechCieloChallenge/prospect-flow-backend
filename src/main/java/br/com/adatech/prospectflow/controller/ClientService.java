@@ -8,6 +8,7 @@ import br.com.adatech.prospectflow.core.usecases.dtos.LegalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.NaturalPersonDTO;
 import br.com.adatech.prospectflow.infra.database.ClientPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,7 @@ public class ClientService {
         this.clientPersistence = clientPersistence;
     }
     /** Serviço responsável pelo cadastro de um prospect do tipo Pessoa Jurídica. **/
-    public ResponseEntity<Client> createLegalPerson(LegalPersonDTO legalPersonDTO){
+    public ResponseEntity<?> createLegalPerson(LegalPersonDTO legalPersonDTO){
         String cnpj = legalPersonDTO.cnpj();//CNPJ
         String corporateName = legalPersonDTO.corporateName(); //Razão Social
         String mcc = legalPersonDTO.mcc(); //Merchant Category Code;
@@ -40,11 +41,11 @@ public class ClientService {
         } catch(IllegalArgumentException exception){
             //Exception dispara pela validação
             System.err.println("An error occurred during data tranference for Legal Person: " + exception.getMessage());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }
     /** Serviço responsável pelo cadastro de um prospect do tipo Pessoa Física. **/
-    public ResponseEntity<Client> createNaturalPerson(NaturalPersonDTO naturalPersonDTO){
+    public ResponseEntity<?> createNaturalPerson(NaturalPersonDTO naturalPersonDTO){
         String mcc = naturalPersonDTO.mcc(); //Merchant Category Code;
         String cpf = naturalPersonDTO.cpf(); //CPF da pessoa
         String name = naturalPersonDTO.name(); //None da pessoa
@@ -60,29 +61,32 @@ public class ClientService {
         } catch(IllegalArgumentException exception){
             //Exception dispara pela validação
             System.err.println("An error occurred during data tranference for Natural Person: " + exception.getMessage());
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
 
     }
     /** Serviço responsável pela consulta de um prospect. **/
-    public ResponseEntity<Client> findClient(String clientId, String clientType) {
+    public ResponseEntity<?> findClient(String clientId, String clientType) {
         if (clientPersistence.clientNotExists(clientId, ClientType.convertFromString(clientType))){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
         Optional<Client> prospect = clientPersistence.findOne(clientId, ClientType.convertFromString(clientType));
-        return prospect.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.badRequest().build());
+        if (prospect.isPresent())
+            return ResponseEntity.ok(prospect);
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
     }
     /** Serviço responsável pela alteração (atualização) dos dados de um determinado prospect. **/
-    public ResponseEntity<Client> update(String clientId, ClientType type, Client updatedClient){
+    public ResponseEntity<?> update(String clientId, ClientType type, Client updatedClient){
         if(this.clientPersistence.clientNotExists(clientId, type)){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
         return ResponseEntity.ok(this.clientPersistence.change(clientId, type, updatedClient));
     }
     /** Serviço responsável pela exclusão dos dados de um determinado prospect. **/
-    public ResponseEntity<Client> delete(String clientId, ClientType type){
+    public ResponseEntity<?> delete(String clientId, ClientType type){
         if(this.clientPersistence.clientNotExists(clientId, type)){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
         return ResponseEntity.noContent().build();
     }

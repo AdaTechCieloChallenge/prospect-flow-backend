@@ -18,23 +18,23 @@ public class ClientController {
     }
 
     @PostMapping("/create-legal-person")
-    public ResponseEntity<Client> createLegalPerson(@RequestBody LegalPersonDTO legalPersonDTO){
+    public ResponseEntity<?> createLegalPerson(@RequestBody LegalPersonDTO legalPersonDTO){
         return this.clientService.createLegalPerson(legalPersonDTO);
     }
     @PostMapping("/create-natural-person")
-    public ResponseEntity<Client> createNaturalPerson(@RequestBody NaturalPersonDTO naturalPersonDTO){
+    public ResponseEntity<?> createNaturalPerson(@RequestBody NaturalPersonDTO naturalPersonDTO){
         return this.clientService.createNaturalPerson(naturalPersonDTO);
     }
     @GetMapping("/find-client/{clientId}/{clientType}")
-    public ResponseEntity<Client> findClient(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType) {
+    public ResponseEntity<?> findClient(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType) {
         return this.clientService.findClient(clientId, clientType);
     }
     @PutMapping("/update")
-    public ResponseEntity<Client> update(@RequestBody String clientId, @RequestBody ClientType type, @RequestBody Client updatedClient){
+    public ResponseEntity<?> update(@RequestBody String clientId, @RequestBody ClientType type, @RequestBody Client updatedClient){
         return this.clientService.update(clientId, type, updatedClient);
     }
     @DeleteMapping("/delete/{clientId}/{clientType}")
-    public ResponseEntity<Client> delete(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType){
+    public ResponseEntity<?> delete(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType){
         return this.clientService.delete(clientId, ClientType.convertFromString(clientType));
     }
 }

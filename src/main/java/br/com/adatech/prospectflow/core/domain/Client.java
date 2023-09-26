@@ -7,16 +7,16 @@ import jakarta.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @MappedSuperclass
 //@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Client implements Serializable {
+public class Client implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String uuid;
     private String mcc;
     @Column(unique = true)
     private String cpf;
@@ -32,11 +32,17 @@ public abstract class Client implements Serializable {
         this.setCpf(cpf);
         this.setName(name);
         this.setEmail(email);
+        this.setUuid(UUID.randomUUID().toString());
     }
 
+
     /** Validação de dados pelo próprio modelo através dos setters no construtor. **/
-    public Integer getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getMcc() {
@@ -97,7 +103,7 @@ public abstract class Client implements Serializable {
     @Override
     public String toString() {
         return "Client{" +
-                "id=" + id +
+                "uuid=" + uuid +
                 ", mcc='" + mcc + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
@@ -111,11 +117,11 @@ public abstract class Client implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return Objects.equals(id, client.id) && Objects.equals(mcc, client.mcc) && Objects.equals(cpf, client.cpf) && Objects.equals(email, client.email) && Objects.equals(name, client.name) && type == client.type;
+        return Objects.equals(uuid, client.uuid) && Objects.equals(mcc, client.mcc) && Objects.equals(cpf, client.cpf) && Objects.equals(email, client.email) && Objects.equals(name, client.name) && type == client.type;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mcc, cpf, email, name, type);
+        return Objects.hash(uuid, mcc, cpf, email, name, type);
     }
 }
