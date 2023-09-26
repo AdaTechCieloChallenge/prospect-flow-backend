@@ -5,9 +5,6 @@ import br.com.adatech.prospectflow.core.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 @Service
 public class JavaQueue implements QueueAdapter {
     private final FIFOService fifoService;

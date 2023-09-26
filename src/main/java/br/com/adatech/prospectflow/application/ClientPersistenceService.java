@@ -5,7 +5,6 @@ import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.usecases.ClientPersistenceUseCase;
 import br.com.adatech.prospectflow.core.domain.Client;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,22 +20,23 @@ public class ClientPersistenceService  implements ClientPersistenceUseCase {
     }
     @Override
     public Client register(Client client) {
-        return null;
+
+        return this.clientPersistenceAdapter.register(client);
     }
 
     @Override
     public Client change(String cnpjOrCpf, ClientType clientType, Client updatedClient) {
-        return null;
+        return this.clientPersistenceAdapter.change(cnpjOrCpf, clientType, updatedClient);
     }
 
     @Override
     public Optional<Client> findOne(String cnpjOrCpf, ClientType clientType) {
-        return null;
+        return this.clientPersistenceAdapter.findOne(cnpjOrCpf, clientType);
     }
 
     @Override
     public void delete(String cnpjOrCpf, ClientType clientType) {
-
+        this.clientPersistenceAdapter.delete(cnpjOrCpf, clientType);
     }
 
 }

@@ -7,10 +7,9 @@ import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.domain.LegalPerson;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -87,12 +86,8 @@ public class ClientPersistence implements ClientPersistenceAdapter {
             throw new EntityNotFoundException("Client not found to be deleted.");
         }
         switch (clientType){
-            case PF -> {
-                this.naturalPersonRepository.deleteById(cnpjOrCpf);
-            }
-            case PJ -> {
-                this.legalPersonRepository.deleteById(cnpjOrCpf);
-            }
+            case PF -> this.naturalPersonRepository.deleteById(cnpjOrCpf);
+            case PJ -> this.legalPersonRepository.deleteById(cnpjOrCpf);
             default -> throw new IllegalArgumentException("Invalid client type provided to delete.");
         }
     }

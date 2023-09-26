@@ -2,7 +2,6 @@ package br.com.adatech.prospectflow.core.usecases;
 
 import br.com.adatech.prospectflow.core.domain.Client;
 import br.com.adatech.prospectflow.core.domain.ClientType;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
 

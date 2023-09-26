@@ -19,25 +19,23 @@ public class ClientController {
 
     @PostMapping("/create-legal-person")
     public ResponseEntity<Client> createLegalPerson(@RequestBody LegalPersonDTO legalPersonDTO){
-        return null;
+        return this.clientService.createLegalPerson(legalPersonDTO);
     }
     @PostMapping("/create-natural-person")
     public ResponseEntity<Client> createNaturalPerson(@RequestBody NaturalPersonDTO naturalPersonDTO){
-        return null;
+        return this.clientService.createNaturalPerson(naturalPersonDTO);
     }
     @GetMapping("/find-client")
     public ResponseEntity<Client> findClient(@RequestParam String clientId, @RequestParam String clientType) {
         return this.clientService.findClient(clientId, clientType);
     }
-
     @PutMapping("/update")
     public ResponseEntity<Client> update(@RequestBody String clientId, @RequestBody ClientType type, @RequestBody Client updatedClient){
-        return null;
+        return this.clientService.update(clientId, type, updatedClient);
     }
-
     @DeleteMapping("/delete")
-    public ResponseEntity<Client> delete(){
-        return null;
+    public ResponseEntity<Client> delete(@RequestParam String clientId, @RequestParam String clientType){
+        return this.clientService.delete(clientId, ClientType.convertFromString(clientType));
     }
 
 }

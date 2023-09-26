@@ -16,11 +16,11 @@ public class QueueService implements QueueUseCase {
 
     @Override
     public void send(Client client) {
-
+        this.queueAdapter.send(client);
     }
 
     @Override
     public Client consume() {
-        return null;
+        return this.queueAdapter.consume();
     }
 }
