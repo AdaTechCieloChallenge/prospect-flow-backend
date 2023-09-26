@@ -53,6 +53,7 @@ public class LegalPerson extends Client {
                 ", cpf='" + super.getCpf() + '\'' +
                 ", name='" + super.getName() + '\'' +
                 ", email='" + super.getEmail() + '\'' +
+                ", email='" + super.getEmail() + '\'' +
                 '}';
     }
 

@@ -25,17 +25,16 @@ public class ClientController {
     public ResponseEntity<Client> createNaturalPerson(@RequestBody NaturalPersonDTO naturalPersonDTO){
         return this.clientService.createNaturalPerson(naturalPersonDTO);
     }
-    @GetMapping("/find-client")
-    public ResponseEntity<Client> findClient(@RequestParam String clientId, @RequestParam String clientType) {
+    @GetMapping("/find-client/{clientId}/{clientType}")
+    public ResponseEntity<Client> findClient(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType) {
         return this.clientService.findClient(clientId, clientType);
     }
     @PutMapping("/update")
     public ResponseEntity<Client> update(@RequestBody String clientId, @RequestBody ClientType type, @RequestBody Client updatedClient){
         return this.clientService.update(clientId, type, updatedClient);
     }
-    @DeleteMapping("/delete")
-    public ResponseEntity<Client> delete(@RequestParam String clientId, @RequestParam String clientType){
+    @DeleteMapping("/delete/{clientId}/{clientType}")
+    public ResponseEntity<Client> delete(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType){
         return this.clientService.delete(clientId, ClientType.convertFromString(clientType));
     }
-
 }

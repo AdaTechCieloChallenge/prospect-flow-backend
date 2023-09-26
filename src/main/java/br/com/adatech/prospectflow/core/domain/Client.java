@@ -94,4 +94,28 @@ public abstract class Client implements Serializable {
         this.type = type;
     };
 
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", mcc='" + mcc + '\'' +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(id, client.id) && Objects.equals(mcc, client.mcc) && Objects.equals(cpf, client.cpf) && Objects.equals(email, client.email) && Objects.equals(name, client.name) && type == client.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, mcc, cpf, email, name, type);
+    }
 }

@@ -14,5 +14,4 @@ public class NaturalPerson extends Client{
         super(mcc, cpf, name, email);
         this.setType(ClientType.PF);
     }
-
 }
