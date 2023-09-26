@@ -81,6 +81,13 @@
             <version>2.15.2</version>
         </dependency>
 
+        <!-- Gson: Converte objeto java numa representação JSON de forma mais simplificada -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
