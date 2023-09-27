@@ -14,4 +14,17 @@ public class NaturalPerson extends Client{
         super(mcc, cpf, name, email);
         this.setType(ClientType.PF);
     }
+
+    public String toString() {
+        return "LegalPerson{" +
+                ", mcc='" + super.getMcc() + '\'' +
+                ", cpf='" + super.getCpf() + '\'' +
+                ", name='" + super.getName() + '\'' +
+                ", email='" + super.getEmail() + '\'' +
+                ", email='" + super.getEmail() + '\'' +
+                ", created_at='" + super.getCreatedAt() + '\'' +
+                ", updated_at='" + super.getUpdatedAt() + '\'' +
+                ", version='" + super.getVersion() + '\'' +
+                '}';
+    }
 }

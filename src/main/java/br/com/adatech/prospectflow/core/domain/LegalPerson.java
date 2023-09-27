@@ -54,6 +54,9 @@ public class LegalPerson extends Client {
                 ", name='" + super.getName() + '\'' +
                 ", email='" + super.getEmail() + '\'' +
                 ", email='" + super.getEmail() + '\'' +
+                ", created_at='" + super.getCreatedAt() + '\'' +
+                ", updated_at='" + super.getUpdatedAt() + '\'' +
+                ", version='" + super.getVersion() + '\'' +
                 '}';
     }
 
