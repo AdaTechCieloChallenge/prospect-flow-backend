@@ -42,4 +42,9 @@ public class ClientController {
     public ResponseEntity<?> delete(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType){
         return this.clientService.delete(clientId, ClientType.convertFromString(clientType));
     }
+
+    @GetMapping("/consume-prospect")
+    public ResponseEntity<?> dequeueNextProspect(){
+        return this.clientService.dequeueNextProspect();
+    }
 }

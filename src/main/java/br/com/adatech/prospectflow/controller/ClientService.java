@@ -168,4 +168,9 @@ public class ClientService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
     }
+
+    /** Serviço responsável pelo gerenciamento (consumo) dos prospects na fila. **/
+    public ResponseEntity<?> dequeueNextProspect(){
+        return ResponseEntity.ok("Consume route is up");
+    }
 }
