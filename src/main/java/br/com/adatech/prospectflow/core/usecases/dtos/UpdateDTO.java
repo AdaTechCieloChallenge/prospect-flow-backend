@@ -7,7 +7,5 @@ public record UpdateDTO(String mcc,
                         String name,
                         String email,
                         String cnpj,
-                        String corporateName,
-                        String version,
-                        String timestamp
+                        String corporateName
                         ) {}
