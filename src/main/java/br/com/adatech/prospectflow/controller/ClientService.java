@@ -6,12 +6,16 @@ import br.com.adatech.prospectflow.core.domain.LegalPerson;
 import br.com.adatech.prospectflow.core.domain.NaturalPerson;
 import br.com.adatech.prospectflow.core.usecases.dtos.LegalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.NaturalPersonDTO;
+import br.com.adatech.prospectflow.core.usecases.dtos.UpdateDTO;
 import br.com.adatech.prospectflow.infra.database.ClientPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -67,27 +71,101 @@ public class ClientService {
     }
     /** Serviço responsável pela consulta de um prospect. **/
     public ResponseEntity<?> findClient(String clientId, String clientType) {
-        if (clientPersistence.clientNotExists(clientId, ClientType.convertFromString(clientType))){
+        try{
+            if (clientPersistence.clientNotExists(clientId, ClientType.convertFromString(clientType))){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+            }
+            Optional<Client> prospect = clientPersistence.findOne(clientId, ClientType.convertFromString(clientType));
+            if (prospect.isPresent())
+                return ResponseEntity.ok(prospect);
+            else
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
+        }catch (NoSuchElementException e){
+            System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
-        Optional<Client> prospect = clientPersistence.findOne(clientId, ClientType.convertFromString(clientType));
-        if (prospect.isPresent())
-            return ResponseEntity.ok(prospect);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
     }
     /** Serviço responsável pela alteração (atualização) dos dados de um determinado prospect. **/
-    public ResponseEntity<?> update(String clientId, ClientType type, Client updatedClient){
-        if(this.clientPersistence.clientNotExists(clientId, type)){
+    public ResponseEntity<?> update(String cnpjOrCpf, String clientType, UpdateDTO updateDTO) {
+        ClientType type = ClientType.convertFromString(clientType);
+        try{
+            if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+            }
+            Client updatedClient;
+            switch (type){
+                case PF -> {
+                    String cpf = updateDTO.cpf();
+                    String mcc = updateDTO.mcc();
+                    String name = updateDTO.name();
+                    String email = updateDTO.email();
+                    try{
+                        //lança exceção em função das validações das regras.
+                        updatedClient = new NaturalPerson(mcc, cpf, name, email);
+                        Optional<Client> prospect = this.clientPersistence.findOne(cpf, type);
+
+                        Client oldClient;
+                        if(prospect.isPresent()) {
+                            oldClient = prospect.get();
+                            String uuid = oldClient.getUuid();
+                            updatedClient.setUuid(uuid); //Finalização da tranferência de dados.
+
+                            //chamar persistência para atualizar o registro.
+
+                            return ResponseEntity.ok(updatedClient);
+                        }
+                        else
+                            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while updating.");
+                    }catch (IllegalArgumentException e){
+                        System.err.println("An error occurred during data tranference for update Natural Person: " + e.getMessage());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                    }
+                }
+                case PJ -> {
+                    String cnpj = updateDTO.cnpj();
+                    String corporateName = updateDTO.corporateName();
+                    String mcc = updateDTO.mcc();
+                    String cpf = updateDTO.cpf();
+                    String name = updateDTO.name();
+                    String email = updateDTO.email();
+                    try{
+                        updatedClient = new LegalPerson(mcc, cpf, name, email, cnpj, corporateName);
+                        Optional<Client> prospect =  this.clientPersistence.findOne(cnpj, type);
+
+                        Client oldClient;
+                        if(prospect.isPresent()){
+                            oldClient = prospect.get();
+                            String uuid = oldClient.getUuid();
+                            updatedClient.setUuid(uuid);
+
+                            //chama a persistência
+
+                            return ResponseEntity.ok(updatedClient);
+                        }else
+                            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while updating.");
+                    }catch (IllegalArgumentException e){
+                        System.err.println("An error occurred during data tranference for update Legal Person: " + e.getMessage());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                    }
+                }
+            }
+        }catch(NoSuchElementException e){
+            System.err.println("Nothing found while consulting this client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
-        return ResponseEntity.ok(this.clientPersistence.change(clientId, type, updatedClient));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred during update.");
     }
+
     /** Serviço responsável pela exclusão dos dados de um determinado prospect. **/
     public ResponseEntity<?> delete(String clientId, ClientType type){
-        if(this.clientPersistence.clientNotExists(clientId, type)){
+        try{
+            if(this.clientPersistence.clientNotExists(clientId, type)){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+            }
+            return ResponseEntity.noContent().build();
+        }catch (NoSuchElementException e){
+            System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
-        return ResponseEntity.noContent().build();
     }
 }
