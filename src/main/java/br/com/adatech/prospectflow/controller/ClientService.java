@@ -108,9 +108,11 @@ public class ClientService {
             if (prospect.isPresent())
                 return ResponseEntity.ok(prospect.get());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
-        }catch (NoSuchElementException | IllegalArgumentException e){
+        }catch (NoSuchElementException e){
             System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+        }catch(IllegalArgumentException illegal){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
         }
     }
     /** Serviço responsável pela alteração (atualização) dos dados de um determinado prospect. **/
@@ -203,9 +205,11 @@ public class ClientService {
                     }
                 }
             }
-        }catch(NoSuchElementException | IllegalArgumentException e){
+        }catch(NoSuchElementException e){
             System.err.println("Nothing found while consulting this client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+        }catch (IllegalArgumentException illegal){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An unknown error occurred during update.");
     }
