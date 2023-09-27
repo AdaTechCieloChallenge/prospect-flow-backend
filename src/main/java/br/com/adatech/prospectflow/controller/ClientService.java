@@ -219,9 +219,11 @@ public class ClientService {
             }
 
             return ResponseEntity.noContent().build();
-        }catch (NoSuchElementException | EntityNotFoundException | IllegalArgumentException e){
+        }catch (NoSuchElementException | EntityNotFoundException e){
             System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+        }catch (IllegalArgumentException illegal){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
         }
     }
 
