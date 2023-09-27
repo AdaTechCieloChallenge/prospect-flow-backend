@@ -1,7 +1,6 @@
 package br.com.adatech.prospectflow.core.domain;
 
 import br.com.adatech.prospectflow.core.utils.EmailValidator;
-import com.google.gson.Gson;
 import jakarta.persistence.*;
 
 import java.io.Serial;
