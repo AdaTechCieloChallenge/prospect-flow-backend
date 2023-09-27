@@ -32,10 +32,9 @@ public class ClientPersistence implements ClientPersistenceAdapter {
         ClientType type = client.getType();
         switch (type){
             case PF -> {
-                try{ //findOne
-                    Optional<Client> prospect = this.findOne(client.getCpf(), type);
-                    //Se o cadastra já existir
-                    if(prospect.isPresent()){
+                try{
+                    //Se cliente já existe.
+                    if(!clientNotExists(client.getCpf(), client.getType())){
                         throw new EntityExistsException("This client as a natural person already exists.");
                     }
                     //Caso contrário persista-o
@@ -58,12 +57,12 @@ public class ClientPersistence implements ClientPersistenceAdapter {
             case PJ -> {
                 try{ //findOne
                     LegalPerson legalPerson = (LegalPerson) client; //downcasting
-                    Optional<Client> prospect = this.findOne(legalPerson.getCnpj(), type);
-                    //Se o cliente existir
-                    if(prospect.isPresent()){
+                    //Se já existe
+                    if(!clientNotExists(legalPerson.getCnpj(), legalPerson.getType())){
                         throw new EntityExistsException("This client as a legal person already exists.");
                     }
                     //Caso contrário persista-o
+
                     LegalPerson legalPersonSaved = null;
                     try{//save
                         legalPersonSaved = this.legalPersonRepository.save(legalPerson);
@@ -124,18 +123,18 @@ public class ClientPersistence implements ClientPersistenceAdapter {
     public Optional<Client> findOne(String cnpjOrCpf, ClientType clientType) {
         switch (clientType){
             case PF -> {
-                Optional<Client> prospect = this.naturalPersonRepository.findByCpf(cnpjOrCpf).map(client -> (Client) client);
-                if(prospect.isEmpty()){
-                    throw new NoSuchElementException("This natural person client is not registered yet.");
+                try{
+                    return this.naturalPersonRepository.findByCpf(cnpjOrCpf).map(client -> (Client) client);
+                }catch(Exception e){
+                    return Optional.empty();
                 }
-                return prospect;
             }
             case PJ -> {
-                Optional<Client> prospect = this.legalPersonRepository.findByCnpj(cnpjOrCpf).map(client -> (Client) client);
-                if(prospect.isEmpty()){
-                    throw new NoSuchElementException("This legal person client is not registered yet.");
+                try{
+                    return this.legalPersonRepository.findByCnpj(cnpjOrCpf).map(client -> (Client) client);
+                }catch (Exception e){
+                    return Optional.empty();
                 }
-                return prospect;
             }
             default -> throw new IllegalArgumentException("Invalid client type provided to find one.");
         }
@@ -153,14 +152,16 @@ public class ClientPersistence implements ClientPersistenceAdapter {
         }
     }
     public boolean clientNotExists(String cnpjOrCpf, ClientType clientType){
-        Optional<Client> clientFound = null;
+        Optional<Client> clientFound;
         try{
             clientFound = this.findOne(cnpjOrCpf, clientType);
             return clientFound.isEmpty();
         }catch(IllegalArgumentException e){
             System.err.println("Error while veryfing if client exists: "+ e.getMessage());
             e.getCause();
+            throw new RuntimeException("Invalid argument: " + e.getMessage());
+        }catch (NoSuchElementException notfound){
+            return true;
         }
-        return false;
     }
 }

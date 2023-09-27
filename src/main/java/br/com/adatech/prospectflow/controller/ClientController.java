@@ -39,7 +39,7 @@ public class ClientController {
     }
     @DeleteMapping("/delete/{cnpjOrCpf}/{clientType}")
     public ResponseEntity<?> delete(@PathVariable(value = "cnpjOrCpf") String cnpjOrCpf, @PathVariable(value = "clientType") String clientType){
-        return this.clientService.delete(cnpjOrCpf, ClientType.convertFromString(clientType));
+        return this.clientService.delete(cnpjOrCpf, clientType);
     }
 
     @GetMapping("/consume-prospect")

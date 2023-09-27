@@ -108,15 +108,15 @@ public class ClientService {
             if (prospect.isPresent())
                 return ResponseEntity.ok(prospect.get());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
-        }catch (NoSuchElementException e){
+        }catch (NoSuchElementException | IllegalArgumentException e){
             System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
     }
     /** Serviço responsável pela alteração (atualização) dos dados de um determinado prospect. **/
     public ResponseEntity<?> update(String cnpjOrCpf, String clientType, UpdateDTO updateDTO) {
-        ClientType type = ClientType.convertFromString(clientType);
         try{
+            ClientType type = ClientType.convertFromString(clientType);
             if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
             }
@@ -211,14 +211,15 @@ public class ClientService {
     }
 
     /** Serviço responsável pela exclusão dos dados de um determinado prospect. **/
-    public ResponseEntity<?> delete(String cnpjOrCpf, ClientType type){
+    public ResponseEntity<?> delete(String cnpjOrCpf, String clientType){
         try{
+            ClientType type = ClientType.convertFromString(clientType);
             if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
             }
 
             return ResponseEntity.noContent().build();
-        }catch (NoSuchElementException | EntityNotFoundException e){
+        }catch (NoSuchElementException | EntityNotFoundException | IllegalArgumentException e){
             System.err.println("An error occured while consulting a client: "+ e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
         }
