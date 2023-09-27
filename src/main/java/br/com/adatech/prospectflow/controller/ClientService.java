@@ -99,12 +99,12 @@ public class ClientService {
         }
     }
     /** Serviço responsável pela consulta de um prospect. **/
-    public ResponseEntity<?> findClient(String cpfOrCnpj, String clientType) {
+    public ResponseEntity<?> findClient(String cnpjOrCpf, String clientType) {
         try{
-            if (clientPersistence.clientNotExists(cpfOrCnpj, ClientType.convertFromString(clientType))){
+            if (clientPersistence.clientNotExists(cnpjOrCpf, ClientType.convertFromString(clientType))){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
             }
-            Optional<Client> prospect = clientPersistence.findOne(cpfOrCnpj, ClientType.convertFromString(clientType));
+            Optional<Client> prospect = clientPersistence.findOne(cnpjOrCpf, ClientType.convertFromString(clientType));
             if (prospect.isPresent())
                 return ResponseEntity.ok(prospect.get());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet");
@@ -211,9 +211,9 @@ public class ClientService {
     }
 
     /** Serviço responsável pela exclusão dos dados de um determinado prospect. **/
-    public ResponseEntity<?> delete(String clientId, ClientType type){
+    public ResponseEntity<?> delete(String cnpjOrCpf, ClientType type){
         try{
-            if(this.clientPersistence.clientNotExists(clientId, type)){
+            if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
             }
 

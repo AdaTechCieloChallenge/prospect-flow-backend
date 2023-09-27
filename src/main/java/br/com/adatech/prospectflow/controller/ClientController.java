@@ -25,9 +25,9 @@ public class ClientController {
     public ResponseEntity<?> createNaturalPerson(@RequestBody NaturalPersonDTO naturalPersonDTO){
         return this.clientService.createNaturalPerson(naturalPersonDTO);
     }
-    @GetMapping("/find-client/{clientId}/{clientType}")
-    public ResponseEntity<?> findClient(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType) {
-        return this.clientService.findClient(clientId, clientType);
+    @GetMapping("/find-client/{cnpjOrCpf}/{clientType}")
+    public ResponseEntity<?> findClient(@PathVariable(value = "cnpjOrCpf") String cnpjOrCpf, @PathVariable(value = "clientType") String clientType) {
+        return this.clientService.findClient(cnpjOrCpf, clientType);
     }
     @PutMapping("/update")
     public ResponseEntity<?> update(
@@ -37,9 +37,9 @@ public class ClientController {
     ){
         return this.clientService.update(cnpjOrCpf, type, updateDTO);
     }
-    @DeleteMapping("/delete/{clientId}/{clientType}")
-    public ResponseEntity<?> delete(@PathVariable(value = "clientId") String clientId, @PathVariable(value = "clientType") String clientType){
-        return this.clientService.delete(clientId, ClientType.convertFromString(clientType));
+    @DeleteMapping("/delete/{cnpjOrCpf}/{clientType}")
+    public ResponseEntity<?> delete(@PathVariable(value = "cnpjOrCpf") String cnpjOrCpf, @PathVariable(value = "clientType") String clientType){
+        return this.clientService.delete(cnpjOrCpf, ClientType.convertFromString(clientType));
     }
 
     @GetMapping("/consume-prospect")
