@@ -1,6 +1,5 @@
 package br.com.adatech.prospectflow.controller;
 
-import br.com.adatech.prospectflow.core.domain.Client;
 import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.usecases.dtos.LegalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.NaturalPersonDTO;
