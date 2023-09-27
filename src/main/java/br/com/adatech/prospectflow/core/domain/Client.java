@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,6 +25,11 @@ public class Client implements Serializable {
     private String email;
     private String name;
     private ClientType type = null;
+    private int version;
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 
     public Client(){}
 
@@ -33,6 +39,11 @@ public class Client implements Serializable {
         this.setName(name);
         this.setEmail(email);
         this.setUuid(UUID.randomUUID().toString());
+        // Mecanismos de controle de instância no frontend propagados por herança.
+        this.setVersion(0);
+        Timestamp creationTime = new Timestamp(System.currentTimeMillis());
+        this.setCreatedAt(creationTime);
+        this.setUpdatedAt(creationTime);
     }
 
 
@@ -99,6 +110,30 @@ public class Client implements Serializable {
     public void setType(ClientType type){
         this.type = type;
     };
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
 
     @Override
     public String toString() {
