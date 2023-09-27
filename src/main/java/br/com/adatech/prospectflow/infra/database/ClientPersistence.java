@@ -158,9 +158,9 @@ public class ClientPersistence implements ClientPersistenceAdapter {
             clientFound = this.findOne(cnpjOrCpf, clientType);
             return clientFound.isEmpty();
         }catch(IllegalArgumentException e){
-            System.err.println("Error while veryfing if client exists to be deleted: "+ e.getMessage());
+            System.err.println("Error while veryfing if client exists: "+ e.getMessage());
             e.getCause();
         }
-        throw new EntityNotFoundException("Client not founded to be deleted");
+        return false;
     }
 }
