@@ -1,5 +1,7 @@
 package br.com.adatech.prospectflow.controller;
 
+import br.com.adatech.prospectflow.adapters.ClientPersistenceAdapter;
+import br.com.adatech.prospectflow.adapters.QueueJavaAdapter;
 import br.com.adatech.prospectflow.core.domain.Client;
 import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.domain.LegalPerson;
@@ -14,20 +16,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.sql.Timestamp;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Queue;
 
 @Service
 public class ClientService {
-    private final ClientPersistence clientPersistence;
+    private final ClientPersistenceAdapter clientPersistence;
+    private final QueueJavaAdapter queueJava;
 
     @Autowired
-    public ClientService(ClientPersistence clientPersistence) {
+    public ClientService(ClientPersistence clientPersistence, QueueJavaAdapter queueJava) {
         this.clientPersistence = clientPersistence;
+        this.queueJava = queueJava;
     }
     /** Serviço responsável pelo cadastro de um prospect do tipo Pessoa Jurídica. **/
     public ResponseEntity<?> createLegalPerson(LegalPersonDTO legalPersonDTO){
@@ -131,20 +135,21 @@ public class ClientService {
                     String email = updateDTO.email();
 
                     try{//Regras disparam exceptions.
-                        updatedClient = new NaturalPerson(mcc, cpf, name, email);
+                        Timestamp updatedAt= new Timestamp(System.currentTimeMillis());
+                        updatedClient = new NaturalPerson(mcc, cpf, name, email, updatedAt);
                         Optional<Client> prospect = this.clientPersistence.findOne(cpf, type);
 
                         Client oldClient;
                         if(prospect.isPresent()) {
                             oldClient = prospect.get();
+                            Timestamp oldCreatedAt = oldClient.getCreatedAt();
                             int oldVersion = oldClient.getVersion();
                             String uuid = oldClient.getUuid();
                             updatedClient.setUuid(uuid); //Finalização da tranferência de dados.
 
                             //Atualizar versões para remanejar a posição do prospect alterado na fila.
-                            Timestamp updateTime= new Timestamp(System.currentTimeMillis());
-                            updatedClient.setUpdatedAt(updateTime);
                             updatedClient.setVersion(oldVersion + 1);
+                            updatedClient.setCreatedAt(oldCreatedAt);
 
                             //Persistência para atualizar (alterar) o registro.
                             try{//change
@@ -175,14 +180,21 @@ public class ClientService {
                     String name = updateDTO.name();
                     String email = updateDTO.email();
                     try{//Regras
-                        updatedClient = new LegalPerson(mcc, cpf, name, email, cnpj, corporateName);
+                        Timestamp updatedAt= new Timestamp(System.currentTimeMillis());
+                        updatedClient = new LegalPerson(mcc, cpf, name, email, cnpj, corporateName, updatedAt);
                         Optional<Client> prospect =  this.clientPersistence.findOne(cnpj, type);
 
                         Client oldClient;
                         if(prospect.isPresent()){
                             oldClient = prospect.get();
+                            Timestamp oldCreatedAt = oldClient.getCreatedAt();
+                            int oldVersion = oldClient.getVersion();
                             String uuid = oldClient.getUuid();
                             updatedClient.setUuid(uuid);
+
+                            //Atualizar versões para remanejar a posição do prospect alterado na fila.
+                            updatedClient.setVersion(oldVersion + 1);
+                            updatedClient.setCreatedAt(oldCreatedAt);
 
                             //Persistência para atualizar (alterar) o registro.
                             try{//change
@@ -222,6 +234,8 @@ public class ClientService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
             }
 
+            this.clientPersistence.delete(cnpjOrCpf, type);
+
             return ResponseEntity.noContent().build();
         }catch (NoSuchElementException | EntityNotFoundException e){
             System.err.println("An error occured while consulting a client: "+ e.getMessage());
@@ -231,8 +245,15 @@ public class ClientService {
         }
     }
 
-    /** Serviço responsável pelo gerenciamento (consumo) dos prospects na fila. **/
+    /** Serviço responsável pela consumo dos prospects na fila. **/
     public ResponseEntity<?> dequeueNextProspect(){
+ //       Client prospect = queueJava.consume();
         return ResponseEntity.ok("Consume route is up");
+    }
+    /** Serviço responsável por mostrar os prospects da fila. **/
+    public ResponseEntity<?> getQueueOfProspects(){
+//        Queue<Client> prospects = queueJava.getQueue();
+//        return new ResponseEntity<>(prospects, HttpStatus.OK);
+        return ResponseEntity.ok("Queue Of Prospects route is up");
     }
 }

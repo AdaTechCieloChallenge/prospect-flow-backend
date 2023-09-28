@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 @Entity
 public class LegalPerson extends Client {
@@ -15,6 +16,13 @@ public class LegalPerson extends Client {
 
     public LegalPerson(String mcc, String cpf, String name, String email, String cnpj, String corporateName) {
         super(mcc, cpf, name, email);
+        this.setCnpj(cnpj);
+        this.setCorporateName(corporateName);
+        this.setType(ClientType.PJ); // atribui o ClientType correto, transmitido por herança, para a subclasse.
+    }
+
+    public LegalPerson(String mcc, String cpf, String name, String email, String cnpj, String corporateName, Timestamp updatedAt) {
+        super(mcc, cpf, name, email, updatedAt);
         this.setCnpj(cnpj);
         this.setCorporateName(corporateName);
         this.setType(ClientType.PJ); // atribui o ClientType correto, transmitido por herança, para a subclasse.

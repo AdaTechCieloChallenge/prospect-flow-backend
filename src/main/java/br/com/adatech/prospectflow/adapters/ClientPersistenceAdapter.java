@@ -9,5 +9,6 @@ public interface ClientPersistenceAdapter {
     Client register(Client client);
     Client change(String cnpjOrCpf, ClientType clientType, Client updatedClient);
     Optional<Client> findOne(String cnpjOrCpf, ClientType clientType);
+    boolean clientNotExists(String cnpjOrCpf, ClientType clientType);
     void delete(String cnpjOrCpf, ClientType clientType);
 }

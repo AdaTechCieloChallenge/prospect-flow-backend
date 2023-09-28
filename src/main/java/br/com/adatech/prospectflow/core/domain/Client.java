@@ -45,6 +45,16 @@ public class Client implements Serializable {
         this.setUpdatedAt(creationTime);
     }
 
+    public Client(String mcc, String cpf,  String name, String email, Timestamp updatedAt) {
+        this.setMcc(mcc);
+        this.setCpf(cpf);
+        this.setName(name);
+        this.setEmail(email);
+        this.setUuid(UUID.randomUUID().toString());
+        // Mecanismos de controle de instância no frontend propagados por herança.
+        this.setUpdatedAt(updatedAt);
+    }
+
 
     /** Validação de dados pelo próprio modelo através dos setters no construtor. **/
     public String getUuid() {

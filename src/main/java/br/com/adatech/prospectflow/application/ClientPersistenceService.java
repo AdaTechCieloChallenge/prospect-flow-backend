@@ -35,6 +35,11 @@ public class ClientPersistenceService  implements ClientPersistenceUseCase {
     }
 
     @Override
+    public boolean clientNotExists(String cnpjOrCpf, ClientType clientType) {
+        return this.clientPersistenceAdapter.clientNotExists(cnpjOrCpf, clientType);
+    }
+
+    @Override
     public void delete(String cnpjOrCpf, ClientType clientType) {
         this.clientPersistenceAdapter.delete(cnpjOrCpf, clientType);
     }

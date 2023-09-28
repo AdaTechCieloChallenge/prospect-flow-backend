@@ -1,12 +1,17 @@
 package br.com.adatech.prospectflow.controller;
 
+import br.com.adatech.prospectflow.core.domain.Client;
 import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.usecases.dtos.LegalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.NaturalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.UpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Queue;
 
 @RestController
 @RequestMapping("api/v1")
@@ -45,5 +50,9 @@ public class ClientController {
     @GetMapping("/consume-prospect")
     public ResponseEntity<?> dequeueNextProspect(){
         return this.clientService.dequeueNextProspect();
+    }
+    @GetMapping("/prospects")
+    public ResponseEntity<?> getQueueOfProspects(){
+        return this.clientService.getQueueOfProspects();
     }
 }

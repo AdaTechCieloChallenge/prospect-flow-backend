@@ -12,6 +12,7 @@ import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -141,6 +142,7 @@ public class ClientPersistence implements ClientPersistenceAdapter {
     }
 
     @Override
+    @Transactional
     public void delete(String cnpjOrCpf, ClientType clientType) {
         if(clientNotExists(cnpjOrCpf, clientType)){
             throw new EntityNotFoundException("Client not registered yet.");
