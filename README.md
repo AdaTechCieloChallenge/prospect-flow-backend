@@ -301,3 +301,4 @@ Retorna (em sucesso, apenas um dos casos):
 
 - Clone o repositório
 - Execute a aplicação
+- Verifique o banco de dados em memória em: http://localhost:8080/h2-console/
