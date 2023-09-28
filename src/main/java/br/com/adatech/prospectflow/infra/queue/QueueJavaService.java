@@ -24,4 +24,7 @@ public class QueueJavaService {
     public Queue<Client> getQueue(){
         return queue;
     }
+    public void remove(Client client){
+        queue.remove(client);
+    }
 }

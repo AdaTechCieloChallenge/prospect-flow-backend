@@ -27,4 +27,8 @@ public class QueueJava implements QueueJavaAdapter {
     public Queue<Client> getQueue() {
         return this.queueJavaService.getQueue();
     }
+    @Override
+    public void remove(Client client) {
+        this.queueJavaService.remove(client);
+    }
 }

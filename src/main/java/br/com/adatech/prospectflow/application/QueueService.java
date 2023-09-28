@@ -30,4 +30,9 @@ public class QueueService implements QueueUseCase {
     public Queue<Client> getQueue() {
         return this.queueJavaAdapter.getQueue();
     }
+
+    @Override
+    public void remove(Client client) {
+        this.queueJavaAdapter.remove(client);
+    }
 }

@@ -26,12 +26,12 @@ import java.util.Queue;
 @Service
 public class ClientService {
     private final ClientPersistenceAdapter clientPersistence;
-    private final QueueJavaAdapter queueJava;
+    private final QueueJavaAdapter queueServiceJavai;
 
     @Autowired
     public ClientService(ClientPersistence clientPersistence, QueueJavaAdapter queueJava) {
         this.clientPersistence = clientPersistence;
-        this.queueJava = queueJava;
+        this.queueServiceJavai = queueJava;
     }
     /** Serviço responsável pelo cadastro de um prospect do tipo Pessoa Jurídica. **/
     public ResponseEntity<?> createLegalPerson(LegalPersonDTO legalPersonDTO){
@@ -54,8 +54,8 @@ public class ClientService {
             try{//register
                 prospectRegistered = (LegalPerson) this.clientPersistence.register(legalPerson);
 
-                //Enviar prospect registrado para fila de atendimento.
-                //TODO
+                //Envia prospect registrado para fila de atendimento.
+                queueServiceJavai.send(prospectRegistered);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(prospectRegistered);
             }catch(EntityExistsException | IllegalArgumentException e){
@@ -87,8 +87,8 @@ public class ClientService {
             try{//register
                 prospectRegistered = (NaturalPerson) this.clientPersistence.register(naturalPerson);
 
-                //Enviar prospect registrado para fila de atendimento.
-                //TODO
+                //Envia prospect registrado para fila de atendimento.
+                queueServiceJavai.send(prospectRegistered);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(prospectRegistered);
             }catch(EntityExistsException | IllegalArgumentException e){
@@ -155,9 +155,9 @@ public class ClientService {
                             try{//change
                                 this.clientPersistence.change(cnpjOrCpf, type, updatedClient);
 
-                                //gerenciar internamente a posição do prospect atualizado na fila.
-                                //Invocar serviço de fila responsável por isso.
-                                //TODO
+                                //Remove a versão antiga da fila e manda o com a nova para o final dela.
+                                queueServiceJavai.remove(oldClient);
+                                queueServiceJavai.send(updatedClient);
 
                                 return ResponseEntity.ok(updatedClient);
                             }catch(EntityNotFoundException e){
@@ -202,9 +202,8 @@ public class ClientService {
                             try{//change
                                 this.clientPersistence.change(cnpjOrCpf, type, updatedClient);
 
-                                //gerenciar internamente a posição do prospect atualizado na fila.
-                                //Invocar serviço de fila responsável por isso.
-                                //TODO
+                                queueServiceJavai.remove(oldClient);
+                                queueServiceJavai.send(updatedClient);
 
                                 return ResponseEntity.ok(updatedClient);
                             }catch(EntityNotFoundException e){
@@ -223,7 +222,7 @@ public class ClientService {
             }
         }catch(NoSuchElementException e){
             System.err.println("Nothing found while consulting this client: "+ e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
         }catch (IllegalArgumentException illegal){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
         }
@@ -250,7 +249,7 @@ public class ClientService {
 
     /** Serviço responsável pela consumo dos prospects na fila. **/
     public ResponseEntity<?> dequeueNextProspect(){
-        Client prospect = queueJava.consume();
+        Client prospect = queueServiceJavai.consume();
         if(prospect == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -258,7 +257,7 @@ public class ClientService {
     }
     /** Serviço responsável por mostrar os prospects da fila. **/
     public ResponseEntity<?> getQueueOfProspects(){
-        Queue<Client> prospects = queueJava.getQueue();
+        Queue<Client> prospects = queueServiceJavai.getQueue();
         if(prospects.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }

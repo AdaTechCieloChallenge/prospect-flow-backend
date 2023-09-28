@@ -147,12 +147,15 @@ public class Client implements Serializable {
     @Override
     public String toString() {
         return "Client{" +
-                "uuid=" + uuid +
+                "uuid='" + uuid + '\'' +
                 ", mcc='" + mcc + '\'' +
                 ", cpf='" + cpf + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", type=" + type +
+                ", version=" + version +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
                 '}';
     }
 
@@ -161,11 +164,11 @@ public class Client implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return Objects.equals(uuid, client.uuid) && Objects.equals(mcc, client.mcc) && Objects.equals(cpf, client.cpf) && Objects.equals(email, client.email) && Objects.equals(name, client.name) && type == client.type;
+        return Objects.equals(uuid, client.uuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, mcc, cpf, email, name, type);
+        return Objects.hash(uuid);
     }
 }

@@ -8,4 +8,5 @@ public interface QueueUseCase {
     void send(Client client);
     Client consume();
     Queue<Client> getQueue();
+    void remove(Client client);
 }

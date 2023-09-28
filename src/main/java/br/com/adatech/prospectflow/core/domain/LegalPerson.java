@@ -68,17 +68,4 @@ public class LegalPerson extends Client {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        LegalPerson that = (LegalPerson) o;
-        return Objects.equals(cnpj, that.cnpj) && Objects.equals(corporateName, that.corporateName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), cnpj, corporateName);
-    }
 }

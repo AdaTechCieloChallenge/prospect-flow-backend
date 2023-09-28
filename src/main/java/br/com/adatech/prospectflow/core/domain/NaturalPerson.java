@@ -34,4 +34,5 @@ public class NaturalPerson extends Client{
                 ", version='" + super.getVersion() + '\'' +
                 '}';
     }
+
 }
