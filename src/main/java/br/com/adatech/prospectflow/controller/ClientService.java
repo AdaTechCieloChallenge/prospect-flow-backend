@@ -137,7 +137,7 @@ public class ClientService {
                     try{//Regras disparam exceptions.
                         Timestamp updatedAt= new Timestamp(System.currentTimeMillis());
                         updatedClient = new NaturalPerson(mcc, cpf, name, email, updatedAt);
-                        Optional<Client> prospect = this.clientPersistence.findOne(cpf, type);
+                        Optional<Client> prospect = this.clientPersistence.findOne(cnpjOrCpf, type);
 
                         Client oldClient;
                         if(prospect.isPresent()) {
@@ -184,7 +184,7 @@ public class ClientService {
                     try{//Regras
                         Timestamp updatedAt= new Timestamp(System.currentTimeMillis());
                         updatedClient = new LegalPerson(mcc, cpf, name, email, cnpj, corporateName, updatedAt);
-                        Optional<Client> prospect =  this.clientPersistence.findOne(cnpj, type);
+                        Optional<Client> prospect =  this.clientPersistence.findOne(cnpjOrCpf, type);
 
                         Client oldClient;
                         if(prospect.isPresent()){
