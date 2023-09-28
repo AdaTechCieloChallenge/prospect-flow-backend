@@ -25,3 +25,4 @@ spring:
     swagger-ui:
       path: /swagger-ui.html
       enabled: true
+    pathsToMatch: /api/v1/**

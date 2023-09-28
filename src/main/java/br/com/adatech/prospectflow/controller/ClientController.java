@@ -5,6 +5,7 @@ import br.com.adatech.prospectflow.core.domain.ClientType;
 import br.com.adatech.prospectflow.core.usecases.dtos.LegalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.NaturalPersonDTO;
 import br.com.adatech.prospectflow.core.usecases.dtos.UpdateDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import java.util.Queue;
 
 @RestController
 @RequestMapping("api/v1")
+@Tag(name = "Prospects", description="Endpoints for managing prospects ")
 public class ClientController {
     private final ClientService clientService;
     @Autowired
