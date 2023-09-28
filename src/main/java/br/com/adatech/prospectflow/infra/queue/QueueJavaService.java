@@ -9,21 +9,17 @@ import java.util.*;
 @Service
 public class QueueJavaService {
     /** Estrutura de dados em java que representa uma fila FIFO **/
-    private Queue<Client> queue = null;
+    private final Queue<Client> queue;
 
-   // @Autowired
+    @Autowired
     public QueueJavaService(Queue<Client> queue){
-       // this.queue = queue;
-    }
-    public QueueJavaService(){
-       // this.queue = new ArrayDeque<>();
+        this.queue = queue;
     }
     public void send(Client client){
-      //  queue.offer(client);
+      queue.offer(client);
     }
     public Client receive(){
-       // return queue.poll();
-        return null;
+       return queue.poll();
     }
     public Queue<Client> getQueue(){
         return queue;
