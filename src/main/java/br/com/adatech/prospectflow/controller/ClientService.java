@@ -251,11 +251,17 @@ public class ClientService {
     /** Serviço responsável pela consumo dos prospects na fila. **/
     public ResponseEntity<?> dequeueNextProspect(){
         Client prospect = queueJava.consume();
-        return ResponseEntity.ok("Consume route is up");
+        if(prospect == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(prospect);
     }
     /** Serviço responsável por mostrar os prospects da fila. **/
     public ResponseEntity<?> getQueueOfProspects(){
         Queue<Client> prospects = queueJava.getQueue();
+        if(prospects.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
         return new ResponseEntity<>(prospects, HttpStatus.OK);
     }
 }
