@@ -57,7 +57,7 @@ public class ClientService {
                 //Enviar prospect registrado para fila de atendimento.
                 //TODO
 
-                return ResponseEntity.ok(prospectRegistered);
+                return ResponseEntity.status(HttpStatus.CREATED).body(prospectRegistered);
             }catch(EntityExistsException | IllegalArgumentException e){
                 System.err.println("An error occurred during registration process of legal person: " + e.getMessage());
                 e.getCause();
@@ -90,7 +90,7 @@ public class ClientService {
                 //Enviar prospect registrado para fila de atendimento.
                 //TODO
 
-                return ResponseEntity.ok(prospectRegistered);
+                return ResponseEntity.status(HttpStatus.CREATED).body(prospectRegistered);
             }catch(EntityExistsException | IllegalArgumentException e){
                 System.err.println("An error occurred during registration process of natural person: "+ e.getMessage());
                 e.getCause();
@@ -106,7 +106,7 @@ public class ClientService {
     public ResponseEntity<?> findClient(String cnpjOrCpf, String clientType) {
         try{
             if (clientPersistence.clientNotExists(cnpjOrCpf, ClientType.convertFromString(clientType))){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
             }
             Optional<Client> prospect = clientPersistence.findOne(cnpjOrCpf, ClientType.convertFromString(clientType));
             if (prospect.isPresent())
@@ -124,7 +124,7 @@ public class ClientService {
         try{
             ClientType type = ClientType.convertFromString(clientType);
             if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
             }
             Client updatedClient;
             switch (type){
@@ -160,13 +160,15 @@ public class ClientService {
                                 //TODO
 
                                 return ResponseEntity.ok(updatedClient);
-                            }catch(EntityNotFoundException | IllegalArgumentException e){
+                            }catch(EntityNotFoundException e){
                                 System.err.println("Update failure during update of natural person: " + e.getMessage());
-                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                            }catch(IllegalArgumentException illegal){
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
                             }
                         }
                         else
-                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Prospect is not present to be updated.");
+                            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client is not registered yet.");
                     }catch (IllegalArgumentException | NoSuchElementException e){
                         System.err.println("An error occurred during data tranference for update Natural Person: " + e.getMessage());
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -205,9 +207,11 @@ public class ClientService {
                                 //TODO
 
                                 return ResponseEntity.ok(updatedClient);
-                            }catch(EntityNotFoundException | IllegalArgumentException e){
+                            }catch(EntityNotFoundException e){
                                 System.err.println("Update failure during persistence of LegalPerson: " + e.getMessage());
-                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+                                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                            }catch (IllegalArgumentException illegal){
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
                             }
                         }else
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Prospect is not present to be updated.");
@@ -231,15 +235,14 @@ public class ClientService {
         try{
             ClientType type = ClientType.convertFromString(clientType);
             if(this.clientPersistence.clientNotExists(cnpjOrCpf, type)){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
             }
 
             this.clientPersistence.delete(cnpjOrCpf, type);
 
             return ResponseEntity.noContent().build();
         }catch (NoSuchElementException | EntityNotFoundException e){
-            System.err.println("An error occured while consulting a client: "+ e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not registered yet.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
         }catch (IllegalArgumentException illegal){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(illegal.getMessage());
         }
@@ -247,13 +250,12 @@ public class ClientService {
 
     /** Serviço responsável pela consumo dos prospects na fila. **/
     public ResponseEntity<?> dequeueNextProspect(){
- //       Client prospect = queueJava.consume();
+        Client prospect = queueJava.consume();
         return ResponseEntity.ok("Consume route is up");
     }
     /** Serviço responsável por mostrar os prospects da fila. **/
     public ResponseEntity<?> getQueueOfProspects(){
-//        Queue<Client> prospects = queueJava.getQueue();
-//        return new ResponseEntity<>(prospects, HttpStatus.OK);
-        return ResponseEntity.ok("Queue Of Prospects route is up");
+        Queue<Client> prospects = queueJava.getQueue();
+        return new ResponseEntity<>(prospects, HttpStatus.OK);
     }
 }
