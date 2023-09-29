@@ -237,7 +237,12 @@ public class ClientService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not registered yet.");
             }
 
+            Optional<Client> prospectToBeDeleted = this.clientPersistence.findOne(cnpjOrCpf, ClientType.convertFromString(clientType));
+            //Cliente é removido da fila ao ser deletado, caso esteja lá.
+            prospectToBeDeleted.ifPresent(queueServiceJavai::remove);
+
             this.clientPersistence.delete(cnpjOrCpf, type);
+
 
             return ResponseEntity.noContent().build();
         }catch (NoSuchElementException | EntityNotFoundException e){
